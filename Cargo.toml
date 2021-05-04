@@ -13,7 +13,6 @@ exclude = [
 ]
 homepage = "https://github.com/Lymphatus/libcaesium"
 license = "MIT"
-repository = "https://github.com/shssoichiro/oxipng"
 
 [dependencies]
 mozjpeg = "0.8.20"

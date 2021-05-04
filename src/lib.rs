@@ -3,6 +3,15 @@ mod utils;
 mod jpeg;
 use std::error::Error;
 use crate::utils::get_filetype;
+use std::ffi::CStr;
+use std::os::raw::c_char;
+
+#[repr(C)]
+pub struct C_CSParameters {
+    pub keep_metadata: bool,
+    pub quality: u32,
+    pub optimize: bool
+}
 
 pub struct CSParameters {
     pub jpeg: jpeg::Parameters,
@@ -29,17 +38,23 @@ pub fn initialize_parameters() -> CSParameters
     }
 }
 
-use std::ffi::CStr;
-use std::os::raw::c_char;
-
 #[no_mangle]
-pub extern fn print_str(s: *const c_char) {
+pub extern fn c_compress(input_path: *const c_char, output_path: *const c_char, params: C_CSParameters) {
     unsafe {
-        let raw = CStr::from_ptr(s);
-            if let Ok(msg) = raw.to_str() {
-                println!("print str: {}", msg);
-            }
+        let mut parameters = initialize_parameters();
+        if params.optimize {
+            parameters.quality = 100;
+        } else {
+            parameters.quality = params.quality;
         }
+        parameters.keep_metadata = params.keep_metadata;
+        parameters.jpeg.optimize = params.optimize;
+
+        compress(CStr::from_ptr(input_path).to_str().unwrap().to_string(),
+                 CStr::from_ptr(output_path).to_str().unwrap().to_string(),
+                 parameters)
+            .unwrap();
+    }
 }
 
 pub fn compress(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), Box<dyn Error>> {
