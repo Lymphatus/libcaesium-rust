@@ -8,7 +8,7 @@ use std::ffi::CString;
 use crate::CSParameters;
 
 pub struct Parameters {
-    pub optimize: bool,
+    pub quality: u32,
 }
 
 pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error>
@@ -93,7 +93,7 @@ pub fn compress(input_path: String, output_path: String, parameters: CSParameter
     c_info.set_size(width, height);
 
     c_info.set_raw_data_in(true);
-    c_info.set_quality(parameters.quality as f32);
+    c_info.set_quality(parameters.jpeg.quality as f32);
     c_info.set_progressive_mode();
     c_info.set_optimize_coding(true);
     c_info.set_optimize_scans(true);

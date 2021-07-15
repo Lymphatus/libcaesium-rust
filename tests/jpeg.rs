@@ -16,6 +16,12 @@ pub fn initialize(file: &str) {
     });
 }
 
+pub fn cleanup(file: &str) {
+    if fs::metadata(file).is_ok() {
+        fs::remove_file(file).unwrap();
+    }
+}
+
 fn load<P: AsRef<Path>>(path: P) -> Result<ImgVec<RGBAPLU>, lodepng::Error> {
     let img = load_image::load_image(path.as_ref(), false)?;
     match img.bitmap {
@@ -43,9 +49,10 @@ fn compress_100() {
     let output = "tests/samples/output/compressed_100.jpg";
     initialize(output);
     let mut pars = caesium::initialize_parameters();
-    pars.quality = 100;
+    pars.jpeg.quality = 100;
     caesium::compress(String::from("tests/samples/uncompressed.jpg"), String::from(output), pars).unwrap();
-    assert!(std::path::Path::new(output).exists())
+    assert!(std::path::Path::new(output).exists());
+    cleanup(output)
 }
 
 #[test]
@@ -53,9 +60,10 @@ fn compress_80() {
     let output = "tests/samples/output/compressed_80.jpg";
     initialize(output);
     let mut pars = caesium::initialize_parameters();
-    pars.quality = 80;
+    pars.jpeg.quality = 80;
     caesium::compress(String::from("tests/samples/uncompressed.jpg"), String::from(output), pars).unwrap();
-    assert!(std::path::Path::new(output).exists())
+    assert!(std::path::Path::new(output).exists());
+    cleanup(output)
 }
 
 #[test]
@@ -63,9 +71,10 @@ fn compress_50() {
     let output = "tests/samples/output/compressed_50.jpg";
     initialize(output);
     let mut pars = caesium::initialize_parameters();
-    pars.quality = 50;
+    pars.jpeg.quality = 50;
     caesium::compress(String::from("tests/samples/uncompressed.jpg"), String::from(output), pars).unwrap();
-    assert!(std::path::Path::new(output).exists())
+    assert!(std::path::Path::new(output).exists());
+    cleanup(output)
 }
 
 #[test]
@@ -73,9 +82,10 @@ fn compress_10() {
     let output = "tests/samples/output/compressed_10.jpg";
     initialize(output);
     let mut pars = caesium::initialize_parameters();
-    pars.quality = 10;
+    pars.jpeg.quality = 10;
     caesium::compress(String::from("tests/samples/uncompressed.jpg"), String::from(output), pars).unwrap();
-    assert!(std::path::Path::new(output).exists())
+    assert!(std::path::Path::new(output).exists());
+    cleanup(output)
 }
 
 #[test]
@@ -83,10 +93,11 @@ fn optimize_jpeg() {
     let output = "tests/samples/output/compressed_optimized.jpg";
     initialize(output);
     let mut pars = caesium::initialize_parameters();
-    pars.jpeg.optimize = true;
+    pars.optimize = true;
     caesium::compress(String::from("tests/samples/uncompressed.jpg"), String::from(output), pars).unwrap();
     assert!(std::path::Path::new(output).exists());
 
     //Floats error
-    assert!(diff(output) < 0.001)
+    assert!(diff(output) < 0.001);
+    cleanup(output)
 }

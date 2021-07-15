@@ -1,9 +1,10 @@
 use std::path::PathBuf;
-use oxipng::PngError;
+use oxipng::{PngError};
 use crate::CSParameters;
 
 pub struct Parameters {
-    pub oxipng: oxipng::Options
+    pub oxipng: oxipng::Options,
+    pub level: u32
 }
 
 pub fn optimize(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), PngError> {
@@ -15,19 +16,11 @@ pub fn optimize(input_path: String, output_path: String, parameters: CSParameter
         oxipng_options.strip = oxipng::Headers::Safe;
     }
 
-    if parameters.quality >= 90 {
+    if parameters.optimize {
         oxipng_options.deflate = oxipng::Deflaters::Zopfli;
     } else {
-        let preset = match parameters.quality {
-            1..=39 => 0,
-            40..=49 => 1,
-            50..=59 => 2,
-            60..=69 => 3,
-            70..=79 => 5,
-            80..=89 => 6,
-            _ => 0
-        };
-        oxipng_options = oxipng::Options::from_preset(preset);
+        let preset = parameters.png.level - 1;
+        oxipng_options = oxipng::Options::from_preset(preset as u8);
     }
     oxipng::optimize(&in_file, &out_file, &oxipng_options)
 }
