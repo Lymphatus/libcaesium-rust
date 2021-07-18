@@ -3,9 +3,8 @@ use std::fs::File;
 use std::io::Write;
 use std::{io, mem};
 use mozjpeg_sys as mjs;
-use libc;
-use std::ffi::CString;
 use crate::CSParameters;
+use std::fs;
 
 pub struct Parameters {
     pub quality: u32,
@@ -24,14 +23,8 @@ pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSPa
     mjs::jpeg_create_decompress(&mut src_info);
     mjs::jpeg_create_compress(&mut dst_info);
 
-    let c_input_path = CString::new(input_path.as_bytes())?;
-    let c_output_path = CString::new(output_path.as_bytes())?;
-    let c_input_mode = CString::new("rb")?;
-    let c_output_mode = CString::new("wb")?;
-
-    let input_file = libc::fopen(c_input_path.as_ptr(), c_input_mode.as_ptr());
-
-    mjs::jpeg_stdio_src(&mut src_info, input_file);
+    let in_file = fs::read(input_path)?;
+    mjs::jpeg_mem_src(&mut src_info, in_file.as_ptr(), in_file.len() as _);
 
     if parameters.keep_metadata {
         mjs::jpeg_save_markers(&mut src_info, 0xFE, 0xFFFF);
@@ -40,18 +33,15 @@ pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSPa
         }
     }
 
-
-
     mjs::jpeg_read_header(&mut src_info, i32::from(true));
     let src_coef_arrays = mjs::jpeg_read_coefficients(&mut src_info);
     mjs::jpeg_copy_critical_parameters(&src_info, &mut dst_info);
     let dst_coef_arrays = src_coef_arrays;
 
-
-    libc::fclose(input_file);
-    let output_file = libc::fopen(c_output_path.as_ptr(), c_output_mode.as_ptr());
     dst_info.optimize_coding = i32::from(true);
-    mjs::jpeg_stdio_dest(&mut dst_info, output_file);
+    let mut buf = std::ptr::null_mut();
+    let mut buf_size = 0;
+    mjs::jpeg_mem_dest(&mut dst_info, &mut buf, &mut buf_size);
     mjs::jpeg_write_coefficients(&mut dst_info, dst_coef_arrays);
 
     if parameters.keep_metadata {
@@ -68,8 +58,8 @@ pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSPa
     mjs::jpeg_finish_decompress(&mut src_info);
     mjs::jpeg_destroy_decompress(&mut src_info);
 
-    libc::fclose(output_file);
-
+    let mut output_file_buffer = File::create(output_path)?;
+    output_file_buffer.write_all(std::slice::from_raw_parts(buf, buf_size as usize))?;
     Ok(())
 }
 

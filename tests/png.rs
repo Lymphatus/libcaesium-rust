@@ -22,7 +22,7 @@ pub fn cleanup(file: &str) {
 fn standard_compress_png() {
     let output = "tests/samples/output/compressed.png";
     initialize(output);
-    caesium::compress(String::from("tests/samples/uncompressed.png"),
+    caesium::compress(String::from("tests/samples/uncompressed_드림캐쳐.png"),
                       String::from(output),
                       caesium::initialize_parameters())
         .unwrap();
@@ -37,7 +37,7 @@ fn zopfli_compress_png() {
     let mut params = caesium::initialize_parameters();
     params.png.level = 3;
     params.optimize = true;
-    caesium::compress(String::from("tests/samples/uncompressed.png"),
+    caesium::compress(String::from("tests/samples/uncompressed_드림캐쳐.png"),
                       String::from(output),
                       params)
         .unwrap();
