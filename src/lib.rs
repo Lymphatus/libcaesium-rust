@@ -61,15 +61,15 @@ pub extern fn c_compress(input_path: *const c_char, output_path: *const c_char, 
 
 pub fn compress(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), Box<dyn Error>> {
     let file_type = get_filetype(&input_path);
-    if parameters.jpeg.quality <= 0 || parameters.jpeg.quality > 100 {
-        return Err("Invalid JPEG quality value")?;
+    if parameters.jpeg.quality == 0 || parameters.jpeg.quality > 100 {
+        return Err("Invalid JPEG quality value".into());
     }
 
     if parameters.png.level > 6 {
-        return Err("Invalid PNG quality value")?;
+        return Err("Invalid PNG quality value".into());
     }
     match file_type {
-        utils::SupportedFileTypes::JPEG => {
+        utils::SupportedFileTypes::Jpeg => {
             if parameters.optimize {
                 unsafe {
                     jpeg::optimize(input_path, output_path, parameters)?;
@@ -78,10 +78,10 @@ pub fn compress(input_path: String, output_path: String, parameters: CSParameter
                 jpeg::compress(input_path, output_path, parameters)?;
             }
         }
-        utils::SupportedFileTypes::PNG => {
+        utils::SupportedFileTypes::Png => {
             png::optimize(input_path, output_path, parameters)?;
         }
-        _ => return Err("Unknown file type")?
+        _ => return Err("Unknown file type".into())
     }
 
     Ok(())
