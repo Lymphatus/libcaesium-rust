@@ -31,12 +31,27 @@ fn standard_compress_png() {
 }
 
 #[test]
+fn standard_compress_png_with_optimize_flag() {
+    let output = "tests/samples/output/compressed_max.png";
+    initialize(output);
+    let mut params = caesium::initialize_parameters();
+    params.optimize = true;
+    caesium::compress(String::from("tests/samples/uncompressed_드림캐쳐.png"),
+                      String::from(output),
+                      params)
+        .unwrap();
+    assert!(std::path::Path::new(output).exists());
+    cleanup(output)
+}
+
+#[test]
 fn zopfli_compress_png() {
     let output = "tests/samples/output/optimized.png";
     initialize(output);
     let mut params = caesium::initialize_parameters();
     params.png.level = 3;
     params.optimize = true;
+    params.png.force_zopfli = true;
     caesium::compress(String::from("tests/samples/uncompressed_드림캐쳐.png"),
                       String::from(output),
                       params)

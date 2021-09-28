@@ -4,7 +4,8 @@ use crate::CSParameters;
 
 pub struct Parameters {
     pub oxipng: oxipng::Options,
-    pub level: u32
+    pub level: u32,
+    pub force_zopfli: bool
 }
 
 pub fn optimize(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), PngError> {
@@ -16,10 +17,13 @@ pub fn optimize(input_path: String, output_path: String, parameters: CSParameter
         oxipng_options.strip = oxipng::Headers::Safe;
     }
 
-    if parameters.optimize {
+    if parameters.optimize && parameters.png.force_zopfli {
         oxipng_options.deflate = oxipng::Deflaters::Zopfli;
     } else {
-        let preset = parameters.png.level - 1;
+        let mut preset = parameters.png.level - 1;
+        if parameters.optimize {
+           preset = 6;
+        }
         oxipng_options = oxipng::Options::from_preset(preset as u8);
     }
     oxipng::optimize(&in_file, &out_file, &oxipng_options)

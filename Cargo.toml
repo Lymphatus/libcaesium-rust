@@ -1,6 +1,6 @@
 [package]
 name = "caesium"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["Matteo Paonessa <matteo.paonessa@gmail.com>"]
 edition = "2018"
 categories = [

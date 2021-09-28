@@ -12,6 +12,7 @@ pub struct C_CSParameters {
     pub keep_metadata: bool,
     pub jpeg_quality: u32,
     pub png_level: u32,
+    pub png_force_zopfli: bool,
     pub optimize: bool,
 }
 
@@ -30,7 +31,8 @@ pub fn initialize_parameters() -> CSParameters
 
     let png_parameters = png::Parameters {
         oxipng: oxipng::Options::default(),
-        level: 3
+        level: 3,
+        force_zopfli: false
     };
 
     CSParameters {
@@ -49,6 +51,7 @@ pub extern fn c_compress(input_path: *const c_char, output_path: *const c_char, 
         parameters.png.level = params.png_level - 1;
         parameters.optimize = params.optimize;
         parameters.keep_metadata = params.keep_metadata;
+        parameters.png.force_zopfli = params.png_force_zopfli;
 
         compress(CStr::from_ptr(input_path).to_str().unwrap().to_string(),
                  CStr::from_ptr(output_path).to_str().unwrap().to_string(),
