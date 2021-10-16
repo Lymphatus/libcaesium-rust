@@ -8,7 +8,7 @@ pub struct Parameters {
     pub force_zopfli: bool
 }
 
-pub fn optimize(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), PngError> {
+pub fn compress(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), PngError> {
     let in_file = oxipng::InFile::Path(PathBuf::from(input_path));
     let out_file = oxipng::OutFile::Path(Some(PathBuf::from(output_path)));
     let mut oxipng_options = parameters.png.oxipng;

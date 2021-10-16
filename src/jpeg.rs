@@ -10,7 +10,18 @@ pub struct Parameters {
     pub quality: u32,
 }
 
-pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error>
+pub fn compress(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error>
+{
+    return if parameters.optimize {
+        unsafe {
+            lossless(input_path, output_path, parameters)
+        }
+    } else {
+        lossy(input_path, output_path, parameters)
+    }
+}
+
+unsafe fn lossless(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error>
 {
     let mut src_info: mjs::jpeg_decompress_struct = mem::zeroed();
     let mut src_err = mem::zeroed();
@@ -63,7 +74,7 @@ pub unsafe fn optimize(input_path: String, output_path: String, parameters: CSPa
     Ok(())
 }
 
-pub fn compress(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error> {
+fn lossy(input_path: String, output_path: String, parameters: CSParameters) -> Result<(), io::Error> {
     let markers_option = if parameters.keep_metadata { ALL_MARKERS } else { NO_MARKERS };
     let data = std::fs::read(input_path).unwrap();
     let mem_data = &data[..data.len()];

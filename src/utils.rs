@@ -4,6 +4,7 @@ use std::io::Read;
 pub enum SupportedFileTypes {
     Jpeg,
     Png,
+    Gif,
     Unkn,
 }
 
@@ -16,6 +17,7 @@ pub fn get_filetype(file_path: &str) -> SupportedFileTypes {
 
     let jpeg_header = [0xFF_u8, 0xD8];
     let png_header = [0x89_u8, 0x50];
+    let gif_header = [0x47_u8, 0x49];
 
     // read up to 2 bytes
     let read_result = f.read(&mut buffer);
@@ -29,6 +31,8 @@ pub fn get_filetype(file_path: &str) -> SupportedFileTypes {
         return SupportedFileTypes::Jpeg;
     } else if buffer.iter().zip(png_header.iter()).all(|(a, b)| a == b) {
         return SupportedFileTypes::Png;
+    } else if buffer.iter().zip(gif_header.iter()).all(|(a, b)| a == b) {
+        return SupportedFileTypes::Gif;
     }
 
     SupportedFileTypes::Unkn
