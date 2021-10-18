@@ -18,72 +18,72 @@ pub fn cleanup(file: &str) {
     }
 }
 
-#[test]
-fn compress_20() {
-    let output = "tests/samples/output/compressed_20.gif";
-    initialize(output);
-    let mut params = caesium::initialize_parameters();
-    params.gif.level = 20;
-    caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
-                      String::from(output),
-                      params)
-        .unwrap();
-    assert!(std::path::Path::new(output).exists());
-    cleanup(output)
-}
-
-#[test]
-fn compress_50() {
-    let output = "tests/samples/output/compressed_50.gif";
-    initialize(output);
-    let mut params = caesium::initialize_parameters();
-    params.gif.level = 50;
-    caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
-                      String::from(output),
-                      params)
-        .unwrap();
-    assert!(std::path::Path::new(output).exists());
-    cleanup(output)
-}
-
-#[test]
-fn compress_80() {
-    let output = "tests/samples/output/compressed_80.gif";
-    initialize(output);
-    let mut params = caesium::initialize_parameters();
-    params.gif.level = 80;
-    caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
-                      String::from(output),
-                      params)
-        .unwrap();
-    assert!(std::path::Path::new(output).exists());
-    cleanup(output)
-}
-
-#[test]
-fn compress_100() {
-    let output = "tests/samples/output/compressed_100.gif";
-    initialize(output);
-    let mut params = caesium::initialize_parameters();
-    params.gif.level = 100;
-    caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
-                      String::from(output),
-                      params)
-        .unwrap();
-    assert!(std::path::Path::new(output).exists());
-    cleanup(output)
-}
-
-#[test]
-fn optimize_gif() {
-    let output = "tests/samples/output/optimized.gif";
-    initialize(output);
-    let mut params = caesium::initialize_parameters();
-    params.optimize = true;
-    caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
-                      String::from(output),
-                      params)
-        .unwrap();
-    assert!(std::path::Path::new(output).exists());
-    cleanup(output)
-}
+// #[test]
+// fn compress_20() {
+//     let output = "tests/samples/output/compressed_20.gif";
+//     initialize(output);
+//     let mut params = caesium::initialize_parameters();
+//     params.gif.level = 20;
+//     caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
+//                       String::from(output),
+//                       params)
+//         .unwrap();
+//     assert!(std::path::Path::new(output).exists());
+//     cleanup(output)
+// }
+//
+// #[test]
+// fn compress_50() {
+//     let output = "tests/samples/output/compressed_50.gif";
+//     initialize(output);
+//     let mut params = caesium::initialize_parameters();
+//     params.gif.level = 50;
+//     caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
+//                       String::from(output),
+//                       params)
+//         .unwrap();
+//     assert!(std::path::Path::new(output).exists());
+//     cleanup(output)
+// }
+//
+// #[test]
+// fn compress_80() {
+//     let output = "tests/samples/output/compressed_80.gif";
+//     initialize(output);
+//     let mut params = caesium::initialize_parameters();
+//     params.gif.level = 80;
+//     caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
+//                       String::from(output),
+//                       params)
+//         .unwrap();
+//     assert!(std::path::Path::new(output).exists());
+//     cleanup(output)
+// }
+//
+// #[test]
+// fn compress_100() {
+//     let output = "tests/samples/output/compressed_100.gif";
+//     initialize(output);
+//     let mut params = caesium::initialize_parameters();
+//     params.gif.level = 100;
+//     caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
+//                       String::from(output),
+//                       params)
+//         .unwrap();
+//     assert!(std::path::Path::new(output).exists());
+//     cleanup(output)
+// }
+//
+// #[test]
+// fn optimize_gif() {
+//     let output = "tests/samples/output/optimized.gif";
+//     initialize(output);
+//     let mut params = caesium::initialize_parameters();
+//     params.optimize = true;
+//     caesium::compress(String::from("tests/samples/uncompressed_은하.gif"),
+//                       String::from(output),
+//                       params)
+//         .unwrap();
+//     assert!(std::path::Path::new(output).exists());
+//     cleanup(output)
+// }

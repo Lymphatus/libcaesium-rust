@@ -2,6 +2,7 @@ mod utils;
 mod jpeg;
 mod png;
 mod gif;
+mod webp;
 
 use std::error::Error;
 use crate::utils::get_filetype;
@@ -15,6 +16,7 @@ pub struct C_CSParameters {
     pub png_level: u32,
     pub png_force_zopfli: bool,
     pub gif_level: u32,
+    pub webp_quality: u32,
     pub optimize: bool,
 }
 
@@ -22,30 +24,36 @@ pub struct CSParameters {
     pub jpeg: jpeg::Parameters,
     pub png: png::Parameters,
     pub gif: gif::Parameters,
+    pub webp: webp::Parameters,
     pub keep_metadata: bool,
     pub optimize: bool,
 }
 
 pub fn initialize_parameters() -> CSParameters
 {
-    let jpeg_parameters = jpeg::Parameters {
+    let jpeg = jpeg::Parameters {
         quality: 80
     };
 
-    let png_parameters = png::Parameters {
+    let png = png::Parameters {
         oxipng: oxipng::Options::default(),
         level: 3,
         force_zopfli: false,
     };
 
-    let gif_parameters = gif::Parameters {
+    let gif = gif::Parameters {
         level: 80
     };
 
+    let webp = webp::Parameters {
+        quality: 80
+    };
+
     CSParameters {
-        jpeg: jpeg_parameters,
-        png: png_parameters,
-        gif: gif_parameters,
+        jpeg,
+        png,
+        gif,
+        webp,
         keep_metadata: false,
         optimize: false,
     }
@@ -61,6 +69,7 @@ pub extern fn c_compress(input_path: *const c_char, output_path: *const c_char, 
         parameters.keep_metadata = params.keep_metadata;
         parameters.png.force_zopfli = params.png_force_zopfli;
         parameters.gif.level = params.gif_level;
+        parameters.webp.quality = params.webp_quality;
 
         compress(CStr::from_ptr(input_path).to_str().unwrap().to_string(),
                  CStr::from_ptr(output_path).to_str().unwrap().to_string(),
@@ -95,6 +104,9 @@ pub fn compress(input_path: String, output_path: String, parameters: CSParameter
         }
         utils::SupportedFileTypes::Gif => {
             gif::compress(input_path, output_path, parameters)?;
+        }
+        utils::SupportedFileTypes::WebP => {
+            webp::compress(input_path, output_path, parameters)?;
         }
         _ => return Err("Unknown file type".into())
     }
